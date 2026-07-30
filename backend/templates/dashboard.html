@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>NIGHTINGALE • AURA Command Center</title>
+  <!-- Font Awesome 6 for professional icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --ink: #0b1e33;
+      --ink-soft: #435066;
+      --ink-faint: #7c8aa0;
+
+      --teal: #1f7a6c;
+      --teal-deep: #144e44;
+      --teal-tint: #e7f4f1;
+
+      --blue: #2c6e9e;
+      --blue-tint: #eaf2f9;
+
+      --paper: #f3f6fb;
+      --paper-alt: #edf1f8;
+      --card: #ffffff;
+      --line: #e4e9f2;
+
+      --success: #1e7a4c;
+      --success-bg: #e7f6ee;
+      --success-line: #bfe6d1;
+
+      --warning: #b3790f;
+      --warning-bg: #fdf3e0;
+      --warning-line: #f2ddab;
+
+      --critical: #b23a34;
+      --critical-bg: #fbeae9;
+      --critical-line: #f0c7c4;
+
+      --font-display: 'Fraunces', Georgia, serif;
+      --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+      --shadow-sm: 0 1px 2px 0 rgba(11,30,51,0.05);
+      --shadow-md: 0 12px 28px -10px rgba(11,30,51,0.14);
+      --shadow-lg: 0 24px 48px -12px rgba(11,30,51,0.18);
+
+      --radius-lg: 22px;
+      --radius-md: 14px;
+      --radius-sm: 9px;
+      --transition: 0.2s ease;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--paper);
+      background-image:
+        radial-gradient(circle at 15% 0%, rgba(44,110,158,0.06) 0%, transparent 45%),
+        radial-gradient(circle at 100% 20%, rgba(31,122,108,0.06) 0%, transparent 40%);
+      background-attachment: fixed;
+      color: var(--ink);
+      padding: 28px 32px 60px;
+      min-height: 100vh;
+      line-height: 1.5;
+      display: flex;
+      justify-content: center;
+    }
+
+    .dashboard-container {
+      max-width: 1440px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+    }
+
+    /* ============ Header ============ */
+    .header {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 22px 32px;
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--line);
+      flex-wrap: wrap;
+      gap: 20px;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--ink) 0%, var(--teal) 55%, var(--blue) 100%);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .logo-mark {
+      background: linear-gradient(160deg, #14304d 0%, var(--ink) 100%);
+      color: #eaf3fb;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.4rem;
+      padding: 12px 20px;
+      border-radius: 16px;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 6px 16px rgba(11,30,51,0.28);
+      transition: var(--transition);
+    }
+
+    .logo-mark i {
+      color: #6fc7b8;
+      font-size: 1.3rem;
+    }
+
+    .title-block h1 {
+      font-family: var(--font-display);
+      font-size: 1.9rem;
+      font-weight: 600;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+      line-height: 1.15;
+    }
+
+    .title-block .subtitle {
+      font-size: 0.86rem;
+      font-weight: 500;
+      color: var(--ink-soft);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 6px;
+    }
+
+    .title-block .subtitle i {
+      color: var(--teal);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .live-tag {
+      background: var(--teal-tint);
+      color: var(--teal-deep);
+      font-weight: 600;
+      font-size: 0.76rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      border-radius: 30px;
+      border: 1px solid var(--success-line);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: var(--transition);
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-weight: 500;
+      font-size: 0.88rem;
+      color: var(--ink-soft);
+      transition: var(--transition);
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      background: var(--success);
+      border-radius: 50%;
+      box-shadow: 0 0 0 0 rgba(30,122,76,0.6);
+      animation: pulse-dot 1.8s infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes pulse-dot {
+      0% { box-shadow: 0 0 0 0 rgba(30,122,76,0.55); }
+      70% { box-shadow: 0 0 0 8px rgba(30,122,76,0); }
+      100% { box-shadow: 0 0 0 0 rgba(30,122,76,0); }
+    }
+
+    .refresh-btn {
+      background: var(--ink);
+      border: 1px solid var(--ink);
+      padding: 10px 22px;
+      border-radius: 30px;
+      font-weight: 600;
+      color: #ffffff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+      font-size: 0.86rem;
+      font-family: var(--font-body);
+    }
+
+    .refresh-btn:hover {
+      background: var(--teal-deep);
+      border-color: var(--teal-deep);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .refresh-btn:focus-visible,
+    .patient-item:focus-visible {
+      outline: 2px solid var(--blue);
+      outline-offset: 2px;
+    }
+
+    /* ============ Stats ============ */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .stat-card {
+      position: relative;
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      padding: 22px 22px;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .stat-card::after {
+      content: "";
+      position: absolute;
+      right: -30px;
+      bottom: -30px;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: var(--stat-tint, var(--teal-tint));
+      opacity: 0.5;
+      z-index: 0;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .stat-icon {
+      font-size: 1.7rem;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+      background: var(--stat-tint, var(--teal-tint));
+      color: var(--stat-color, var(--teal-deep));
+    }
+
+    .stat-content {
+      text-align: right;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat-number {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.1;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--ink-faint);
+      font-weight: 600;
+      margin-top: 3px;
+    }
+
+    /* ============ Main grid ============ */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 22px;
+    }
+
+    .patient-list, .detail-view {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      max-height: 640px;
+      overflow-y: auto;
+    }
+
+    .patient-list::-webkit-scrollbar,
+    .detail-view::-webkit-scrollbar,
+    .conversation::-webkit-scrollbar {
+      width: 7px;
+    }
+    .patient-list::-webkit-scrollbar-thumb,
+    .detail-view::-webkit-scrollbar-thumb,
+    .conversation::-webkit-scrollbar-thumb {
+      background: var(--line);
+      border-radius: 10px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.08rem;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 14px;
+      flex-shrink: 0;
+    }
+
+    .section-title i {
+      color: var(--teal);
+      font-size: 0.95rem;
+    }
+
+    /* ============ Patient roster ============ */
+    .patient-item {
+      padding: 14px 15px;
+      border-radius: var(--radius-md);
+      margin-bottom: 7px;
+      cursor: pointer;
+      transition: var(--transition);
+      background: var(--paper-alt);
+      border: 1px solid transparent;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .patient-item:hover {
+      background: var(--blue-tint);
+      border-color: #c7dcee;
+    }
+
+    .patient-item.active {
+      background: var(--blue-tint);
+      border-color: var(--blue);
+      box-shadow: 0 0 0 1px rgba(44,110,158,0.15) inset;
+    }
+
+    .patient-id-text {
+      font-family: var(--font-mono);
+      font-weight: 500;
+      font-size: 0.85rem;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      word-break: break-word;
+    }
+
+    .patient-id-text i {
+      color: var(--ink-faint);
+      font-size: 0.8rem;
+    }
+
+    .no-data, .detail-empty {
+      color: var(--ink-faint);
+      font-size: 0.9rem;
+      padding: 30px 10px;
+      text-align: center;
+    }
+
+    .detail-empty {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      color: var(--ink-soft);
+    }
+
+    /* ============ Status badges ============ */
+    .status-badge-sm {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 20px;
+      white-space: nowrap;
+      letter-spacing: 0.01em;
+    }
+
+    .status-incomplete {
+      background: var(--warning-bg);
+      color: var(--warning);
+      border: 1px solid var(--warning-line);
+    }
+
+    /* ============ Patient chart / detail ============ */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      background: var(--paper-alt);
+      padding: 18px;
+      border-radius: var(--radius-md);
+      margin: 16px 0;
+      border: 1px solid var(--line);
+    }
+
+    .info-grid > div {
+      background: var(--card);
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+    }
+
+    .conversation {
+      background: var(--paper-alt);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      max-height: 270px;
+      overflow-y: auto;
+      border: 1px solid var(--line);
+    }
+
+    .msg {
+      padding: 11px 15px;
+      margin: 9px 0;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      line-height: 1.45;
+      background: var(--card);
+    }
+
+    .msg-patient {
+      background: var(--blue-tint);
+      border-left: 4px solid var(--blue);
+    }
+
+    .msg-aura {
+      background: var(--teal-tint);
+      border-left: 4px solid var(--teal);
+    }
+
+    /* ============ Triage Badge Styles ============ */
+    .triage-card {
+      padding: 16px;
+      border-radius: 12px;
+      margin-top: 16px;
+      border-left: 4px solid #6c757d;
+    }
+    .triage-card.level-1 { border-left-color: #dc3545; background: #fce4ec; }
+    .triage-card.level-2 { border-left-color: #fd7e14; background: #fff3e0; }
+    .triage-card.level-3 { border-left-color: #ffc107; background: #fff8e1; }
+    .triage-card.level-4 { border-left-color: #28a745; background: #e8f5e9; }
+
+    .triage-priority {
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .triage-priority.level-1 { color: #dc3545; }
+    .triage-priority.level-2 { color: #fd7e14; }
+    .triage-priority.level-3 { color: #f9a825; }
+    .triage-priority.level-4 { color: #28a745; }
+
+    .triage-level-badge {
+      font-size: 0.75rem;
+      color: white;
+      padding: 2px 14px;
+      border-radius: 20px;
+      display: inline-block;
+    }
+    .triage-level-badge.level-1 { background: #dc3545; }
+    .triage-level-badge.level-2 { background: #fd7e14; }
+    .triage-level-badge.level-3 { background: #f9a825; }
+    .triage-level-badge.level-4 { background: #28a745; }
+
+    .triage-field {
+      font-size: 0.9rem;
+      margin-top: 6px;
+      color: #1a2332;
+    }
+    .triage-field strong {
+      color: #435066;
+    }
+
+    /* Responsive behavior */
+    @media (max-width: 1050px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+      .header {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 650px) {
+      body {
+        padding: 14px;
+      }
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      .header-left {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .logo-mark {
+        font-size: 1.2rem;
+        padding: 10px 18px;
+      }
+      .title-block h1 {
+        font-size: 1.6rem;
+      }
+      .header-right {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+      .stat-card {
+        padding: 16px;
+      }
+      .stat-number {
+        font-size: 1.9rem;
+      }
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+      .patient-list, .detail-view {
+        max-height: 550px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .refresh-btn {
+        padding: 8px 16px;
+        font-size: 0.8rem;
+      }
+      .status-badge {
+        padding: 6px 14px;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo-mark">
+        <i class="fas fa-staff-snake"></i> NIGHTINGALE
+      </div>
+      <div class="title-block">
+        <h1>AURA Command Center</h1>
+        <div class="subtitle">
+          <i class="fas fa-microphone-alt"></i> Voice Intake Agent · Real-time monitoring
+        </div>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="live-tag"><i class="fas fa-broadcast-tower"></i> Live</span>
+      <div class="status-badge">
+        <span class="dot"></span>
+        <span id="backendStatus">Connected</span>
+      </div>
+      <button class="refresh-btn" onclick="loadData()"><i class="fas fa-sync-alt"></i> Refresh</button>
+    </div>
+  </header>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card" style="--stat-tint: var(--blue-tint); --stat-color: var(--blue);">
+      <div class="stat-icon"><i class="fas fa-user-injured"></i></div>
+      <div class="stat-content">
+        <div class="stat-number" id="totalPatients">0</div>
+        <div class="stat-label">Total Patients</div>
+      </div>
+    </div>
+    <div class="stat-card" style="--stat-tint: var(--teal-tint); --stat-color: var(--teal-deep);">
+      <div class="stat-icon"><i class="fas fa-comments"></i></div>
+      <div class="stat-content">
+        <div class="stat-number" id="totalConversations">0</div>
+        <div class="stat-label">Messages</div>
+      </div>
+    </div>
+    <div class="stat-card" style="--stat-tint: var(--success-bg); --stat-color: var(--success);">
+      <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+      <div class="stat-content">
+        <div class="stat-number" id="completedIntakes">0</div>
+        <div class="stat-label">Completed</div>
+      </div>
+    </div>
+    <div class="stat-card" style="--stat-tint: var(--critical-bg); --stat-color: var(--critical);">
+      <div class="stat-icon"><i class="fas fa-hourglass-half"></i></div>
+      <div class="stat-content">
+        <div class="stat-number" id="incompleteIntakes">0</div>
+        <div class="stat-label">In Progress</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="main-grid">
+    <div class="patient-list">
+      <div class="section-title"><i class="fas fa-list-ul"></i> Patient Roster</div>
+      <div id="patientList"><div class="no-data">Loading patients...</div></div>
+    </div>
+    <div class="detail-view">
+      <div class="section-title"><i class="fas fa-folder-open"></i> Patient Chart</div>
+      <div id="detailView"><div class="detail-empty">👆 Select a patient to view intake details</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let patientsData = [];
+  let selectedPatientId = null;
+
+  async function loadData() {
+    try {
+      const healthRes = await fetch('/health');
+      if (!healthRes.ok) {
+        document.getElementById('backendStatus').textContent = '❌ Offline';
+        return;
+      }
+      document.getElementById('backendStatus').textContent = 'Connected';
+
+      const response = await fetch('/api/patients');
+      const data = await response.json();
+      patientsData = data.patients || [];
+
+      document.getElementById('totalPatients').textContent = patientsData.length;
+
+      let totalMessages = 0;
+      let completed = 0;
+      let incomplete = 0;
+
+      for (const patient of patientsData) {
+        const detailRes = await fetch(`/api/patients/${patient.patient_id}`);
+        const detail = await detailRes.json();
+        const history = detail.history || [];
+        totalMessages += history.length;
+        
+        const info = detail.collected_info;
+        const isComplete = info && info.symptom && info.onset && info.severity && info.location;
+        if (isComplete) {
+          completed++;
+        } else {
+          incomplete++;
+        }
+      }
+
+      document.getElementById('totalConversations').textContent = totalMessages;
+      document.getElementById('completedIntakes').textContent = completed;
+      document.getElementById('incompleteIntakes').textContent = incomplete;
+
+      renderPatientList();
+
+      if (selectedPatientId) {
+        const patient = patientsData.find(p => p.patient_id === selectedPatientId);
+        if (patient) {
+          loadPatientDetail(selectedPatientId);
+        }
+      }
+
+    } catch (error) {
+      console.error('Error loading data:', error);
+      document.getElementById('backendStatus').textContent = '❌ Error';
+    }
+  }
+
+  function renderPatientList() {
+    const container = document.getElementById('patientList');
+    if (patientsData.length === 0) {
+      container.innerHTML = '<div class="no-data" style="padding:20px;text-align:center;">No patients yet.</div>';
+      return;
+    }
+
+    let html = '';
+    for (const patient of patientsData) {
+      const isActive = patient.patient_id === selectedPatientId;
+      const date = new Date(patient.created_at);
+      const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      html += `
+        <div class="patient-item ${isActive ? 'active' : ''}" onclick="selectPatient('${patient.patient_id}')">
+          <div>
+            <div class="patient-id-text"><i class="fas fa-fingerprint"></i> ${patient.patient_id.slice(0,18)}…</div>
+            <div style="font-size:0.7rem; color:#5f6b7a;">${dateStr}</div>
+          </div>
+          <div class="status-badge-sm status-incomplete" id="status-${patient.patient_id}">⏳</div>
+        </div>
+      `;
+    }
+    container.innerHTML = html;
+    for (const patient of patientsData) {
+      updatePatientStatus(patient.patient_id);
+    }
+  }
+
+  async function updatePatientStatus(patientId) {
+    try {
+      const res = await fetch(`/api/patients/${patientId}`);
+      const data = await res.json();
+      const info = data.collected_info;
+      const isComplete = info && info.symptom && info.onset && info.severity && info.location;
+      const el = document.getElementById(`status-${patientId}`);
+      if (el) {
+        if (isComplete) {
+          el.className = 'status-badge-sm';
+          el.style.background = '#e6f7ec';
+          el.style.color = '#2d6a4f';
+          el.textContent = '✅ Complete';
+        } else {
+          el.className = 'status-badge-sm';
+          el.style.background = '#fee9e7';
+          el.style.color = '#bc4742';
+          el.textContent = '⏳ In Progress';
+        }
+      }
+    } catch (e) {}
+  }
+
+  function selectPatient(patientId) {
+    selectedPatientId = patientId;
+    renderPatientList();
+    loadPatientDetail(patientId);
+  }
+
+  async function loadPatientDetail(patientId) {
+    const container = document.getElementById('detailView');
+    container.innerHTML = '<div class="no-data">Loading chart...</div>';
+    try {
+      const res = await fetch(`/api/patients/${patientId}`);
+      const data = await res.json();
+      const info = data.collected_info || {};
+      const history = data.history || [];
+      const triage = data.triage || null;
+      const isComplete = info.symptom && info.onset && info.severity && info.location;
+
+      let html = `
+        <div style="margin-bottom:16px;">
+          <span style="font-weight:600;">Patient ID</span>
+          <div style="font-family:monospace;background:#f1f5f9;padding:8px;border-radius:8px;">${patientId}</div>
+          <span class="status-badge-sm" style="margin-top:8px;display:inline-block;background:${isComplete?'#e6f7ec':'#fee9e7'};color:${isComplete?'#2d6a4f':'#bc4742'};">
+            ${isComplete ? '✅ Complete' : '⏳ In Progress'}
+          </span>
+        </div>
+      `;
+
+      // Collected Info Grid
+      html += `<div class="info-grid">`;
+      const fields = [
+        {key:'symptom',label:'🩺 Symptom'},
+        {key:'onset',label:'📅 Onset'},
+        {key:'severity',label:'📊 Severity'},
+        {key:'location',label:'📍 Location'},
+        {key:'additional',label:'➕ Additional'},
+        {key:'medication',label:'💊 Medication'}
+      ];
+      for (let f of fields) {
+        let val = info[f.key];
+        let has = val && val !== 'null';
+        html += `<div><span style="font-size:0.7rem;color:#475569;">${f.label}</span><br>
+          <span style="font-weight:500;color:${has?'#0f172a':'#b91c1c'};">${has ? val : '— not collected'}</span></div>`;
+      }
+      html += `</div>`;
+
+      // ---------- TRIAGE SECTION (SENTINEL) ----------
+      if (triage && triage.priority) {
+        const level = triage.level || 4;
+        const levelColors = {
+          1: '#dc3545',  // Emergency - Red
+          2: '#fd7e14',  // High - Orange
+          3: '#ffc107',  // Routine - Yellow
+          4: '#28a745'   // Information - Green
+        };
+        const levelBg = {
+          1: '#fce4ec',
+          2: '#fff3e0',
+          3: '#fff8e1',
+          4: '#e8f5e9'
+        };
+        const color = levelColors[level] || '#6c757d';
+        const bg = levelBg[level] || '#f8f9fa';
+        
+        html += `
+          <div style="margin-top: 16px; padding: 16px; background: ${bg}; border-radius: 12px; border-left: 4px solid ${color};">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+              <span style="font-weight: 700; font-size: 1.1rem; color: ${color};">
+                🚦 ${triage.priority}
+              </span>
+              <span style="font-size: 0.75rem; background: ${color}; color: white; padding: 2px 14px; border-radius: 20px;">
+                Level ${level}
+              </span>
+            </div>
+            <div style="margin-top: 8px; font-size: 0.9rem; color: #1a2332;">
+              <strong>Reason:</strong> ${triage.reason}
+            </div>
+            <div style="margin-top: 4px; font-size: 0.9rem; color: #1a2332;">
+              <strong>Recommendation:</strong> ${triage.recommendation}
+            </div>
+            <div style="margin-top: 4px; font-size: 0.9rem; color: #1a2332;">
+              <strong>Department:</strong> ${triage.department || 'General Medicine'}
+            </div>
+          </div>
+        `;
+      }
+
+      // Conversation
+      html += `<div style="font-weight:600;margin:10px 0;">💬 Conversation</div><div class="conversation">`;
+      if(history.length===0) html += `<div class="no-data">No messages yet.</div>`;
+      else {
+        for(let msg of history){
+          let role = msg.role.toLowerCase();
+          html += `<div class="msg msg-${role}"><span style="font-weight:600;">${role==='patient'?'👤 Patient':'🤖 AURA'}</span> ${msg.message}</div>`;
+        }
+      }
+      html += `</div>`;
+
+      container.innerHTML = html;
+    } catch(e) {
+      container.innerHTML = '<div class="no-data">Error loading detail.</div>';
+    }
+  }
+
+  loadData();
+  setInterval(loadData, 15000);
+</script>
+</body>
+</html>
